@@ -51,5 +51,50 @@ class Profile(models.Model):
         if not self.birth_date:
             return None
         today = date.today()
-        return (today.year - self.birth_date.year -
-                (today.month, today.day) < (self.birth_date.month,self.birth_date.day))
+        return (today.year - self.birth_date.year) - (
+                (today.month, today.day) < (self.birth_date.month, self.birth_date.day))
+
+    # рассчет базового метаболизма основываясь на возраст, вес, рост
+    def calculate_bmr(self):
+        if not all([self.weight, self.height, self.birth_date, self.gender]):
+            return None
+        base = 10 * self.weight + 6.25 * self.height - 5 * self.age
+        return base + 5 if self.gender == self.Gender.MALE else base - 161
+
+    # рассчет расхода калорий с учетом активности
+    def calculate_tdee(self):
+        bmr = self.calculate_bmr()
+        if bmr is None:
+            return None
+        factors = {
+            self.ActivityLevel.SEDENTARY: 1.2,
+            self.ActivityLevel.LIGHT: 1.375,
+            self.ActivityLevel.MODERATE: 1.55,
+            self.ActivityLevel.ACTIVE: 1.725,
+            self.ActivityLevel.VERY_ACTIVE: 2,
+        }
+        return bmr * factors[self.activity]
+
+    # расчет КБЖУ в граммах
+    def calculate_daily_targets(self):
+        tdee = self.calculate_tdee()
+        if tdee is None:
+            return None
+        adjustments = {
+            self.Goal.LOSE: 0.8,
+            self.Goal.MAINTAIN: 1.0,
+            self.Goal.GAIN: 1.2,
+        }
+
+        calories = tdee * adjustments[self.goal]
+
+        proteins = self.weight * 2.0
+        fats = self.weight * 0.9
+        carbs = (calories - proteins * 4 - fats * 9) / 4
+
+        return {
+            'calories': round(calories),
+            'proteins': round(proteins),
+            'fats': round(fats),
+            'carbs': round(carbs),
+        }
