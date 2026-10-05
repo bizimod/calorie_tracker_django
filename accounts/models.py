@@ -32,12 +32,14 @@ class Profile(models.Model):
     activity = models.CharField(
         max_length=20,
         choices=ActivityLevel.choices,
-        default=ActivityLevel.SEDENTARY
+        default=ActivityLevel.SEDENTARY,
+        null=True, blank=True
     )
     goal = models.CharField(
         max_length=10,
         choices=Goal.choices,
-        default=Goal.MAINTAIN
+        default=Goal.MAINTAIN,
+        null=True, blank=True
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -73,7 +75,8 @@ class Profile(models.Model):
             self.ActivityLevel.ACTIVE: 1.725,
             self.ActivityLevel.VERY_ACTIVE: 2,
         }
-        return bmr * factors[self.activity]
+        factor = factors.get(self.activity,1.2)
+        return bmr * factor
 
     # расчет КБЖУ в граммах
     def calculate_daily_targets(self):
@@ -86,7 +89,8 @@ class Profile(models.Model):
             self.Goal.GAIN: 1.2,
         }
 
-        calories = tdee * adjustments[self.goal]
+        adjustment = adjustments.get(self.activity,1)
+        calories = tdee * adjustment
 
         proteins = self.weight * 2.0
         fats = self.weight * 0.9
