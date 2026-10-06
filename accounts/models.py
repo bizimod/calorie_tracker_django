@@ -89,7 +89,7 @@ class Profile(models.Model):
             self.Goal.GAIN: 1.2,
         }
 
-        adjustment = adjustments.get(self.activity,1)
+        adjustment = adjustments.get(self.goal,1)
         calories = tdee * adjustment
 
         proteins = self.weight * 2.0
