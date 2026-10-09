@@ -13,3 +13,4 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('category',)
     search_fields = ('name','brand','category','barcode')
     autocomplete_fields = ('category',)
+    ordering = ('-created_at',)

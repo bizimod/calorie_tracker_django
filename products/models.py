@@ -37,11 +37,13 @@ class Product(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['name', 'brand'],
-                name='unique_product_name_brand'),
+                name='unique_product_name_brand',
+                nulls_distinct=False
+            ),
         ]
 
     def __str__(self):
-        return f'{self.name} | {self.brand}' if self.brand else {self.name}
+        return f'{self.name} | {self.brand}' if self.brand else self.name
 
     # КБЖУ для порции в граммах
     def macros_for_weight(self, grams: float):
