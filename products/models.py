@@ -38,7 +38,6 @@ class Product(models.Model):
             models.UniqueConstraint(
                 fields=['name', 'brand'],
                 name='unique_product_name_brand',
-                nulls_distinct=False
             ),
         ]
 
