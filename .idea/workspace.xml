@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afab12e9-33f5-43eb-b231-bc69c2ff085a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/diary/serializers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/diary/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/calorie_tracker_django.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/calorie_tracker_django.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/api_router.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/api_router.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/diary/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/products/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/products/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diary/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/diary/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
