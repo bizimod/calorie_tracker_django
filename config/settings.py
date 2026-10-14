@@ -123,3 +123,9 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+OPEN_FOOD_FACTS = {
+    'BASE_URL': 'https://world.openfoodfacts.org',
+    'USER_AGENT': 'CalorieTracker/1.0 (bizi.mod@gamil.com)',
+    'TIMEOUT': 5,
+}
