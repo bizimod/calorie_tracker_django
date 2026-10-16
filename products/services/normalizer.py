@@ -1,4 +1,6 @@
-def _to_float(value):
+from typing import Optional
+
+def _to_float(value) -> Optional[float]:
     if value in (None, '', 'unknow'):
         return None
     try:
@@ -7,7 +9,7 @@ def _to_float(value):
         return None
 
 
-def normalize_off_product(raw: dict):
+def normalize_off_product(raw: dict) -> Optional[dict]:
     nutriments = raw.get('nutriments', {})
     calories = _to_float(nutriments.get('energy-kcal_100g') or nutriments.get('energy-kcal'))
     proteins = _to_float(nutriments.get('proteins_100g'))
@@ -18,7 +20,7 @@ def normalize_off_product(raw: dict):
     if calories is None and all(v is not None for v in (proteins, fats, carbs)):
         calories = round(proteins * 4 + fats * 9 + carbs * 4, 1)
 
-    # Если у продукта нет БЖУ - продукт бесполезен
+    # Если у продукта нет КБЖУ - продукт бесполезен
     if all(v is None for v in (calories, proteins, fats, carbs)):
         return None
 
