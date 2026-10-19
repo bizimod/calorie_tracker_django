@@ -26,6 +26,11 @@ class ProductService:
         if local:
             return local, False
 
+        cache_key = f"off:barcode:{barcode}"
+        cached = cache.get(cache_key)
+        if cached == 'not_found':
+            return None, False
+
         # 2. Внешний API
         try:
             raw = self.client.get_by_barcode(barcode)
@@ -33,6 +38,7 @@ class ProductService:
             return None, False
 
         if not raw:
+            cache.set(cache_key, 'not_found', 60*60*24)
             return None, False
 
         normalized = normalize_off_product(raw)

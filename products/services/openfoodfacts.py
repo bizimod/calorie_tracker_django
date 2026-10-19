@@ -22,7 +22,7 @@ class OpenFoodFactsClient:
         self.session.headers.update({'User-Agent': OFF['USER_AGENT']})
 
     def get_by_barcode(self, barcode):
-        url = f'{self.base_url}/api/v2/products/{barcode}.json'
+        url = f'{self.base_url}/api/v2/product/{barcode}.json'
         try:
             r = self.session.get(url, timeout=self.timeout)
             r.raise_for_status()

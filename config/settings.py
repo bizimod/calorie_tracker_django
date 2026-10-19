@@ -129,3 +129,10 @@ OPEN_FOOD_FACTS = {
     'USER_AGENT': 'CalorieTracker/1.0 (bizi.mod@gamil.com)',
     'TIMEOUT': 5,
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        # для прод — Redis
+    }
+}

@@ -1,7 +1,7 @@
 from typing import Optional
 
 def _to_float(value) -> Optional[float]:
-    if value in (None, '', 'unknow'):
+    if value in (None, '', 'unknown'):
         return None
     try:
         return round(float(value), 2)
@@ -13,8 +13,8 @@ def normalize_off_product(raw: dict) -> Optional[dict]:
     nutriments = raw.get('nutriments', {})
     calories = _to_float(nutriments.get('energy-kcal_100g') or nutriments.get('energy-kcal'))
     proteins = _to_float(nutriments.get('proteins_100g'))
-    fats = _to_float(nutriments.get('fats_100g'))
-    carbs = _to_float(nutriments.get('carbs_100g'))
+    fats = _to_float(nutriments.get('fat_100g'))
+    carbs = _to_float(nutriments.get('carbohydrates_100g'))
 
     # Если поле calories нет - вычисляем из БЖУ
     if calories is None and all(v is not None for v in (proteins, fats, carbs)):
