@@ -36,13 +36,14 @@ class OpenFoodFactsClient:
         return data.get('product')
 
     def search(self, query, page_size: int = 10):
-        url=f'{self.base_url}/cgi/search.pl'
+        url=f"{self.base_url}/cgi/search.pl"
         params = {
             'search_terms': query,
             'search_simple':1,
             'action':'process',
             'json':1,
             'page_size':page_size,
+            'fields': 'code,product_name,brands,nutriments'
         }
         try:
             r = self.session.get(url, params=params, timeout=self.timeout)

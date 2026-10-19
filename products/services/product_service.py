@@ -1,4 +1,5 @@
 import logging
+import time
 
 from django.db import transaction
 from django.core.cache import cache
@@ -68,11 +69,23 @@ class ProductService:
         if len(local) >= limit:
             return local
 
+        # ВАЖНО: Пауза для соблюдения лимита Open Food Facts
+        time.sleep(1.5)
+
         # 2:
-        try:
-            raw_list = self.client.search(query, page_size=limit * 2)
-        except OpenFoodFactsError:
-            return local
+        for attempt in range(3):
+            try:
+                raw_list = self.client.search(query, page_size=limit * 2)
+                break
+            except OpenFoodFactsError as e:
+                if "503" in str(e) and attempt < 2:
+                    wait = 2 ** attempt  # 1, 2, 4 секунды
+                    logger.warning(f"OFF 503, retry in {wait}s...")
+                    time.sleep(wait)
+                else:
+                    logger.error(f"OFF search failed: {e}")
+                    return local  # Возвращаем только локальные
+
 
         imported = []
         for raw in raw_list:
