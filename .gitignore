@@ -1,8 +1,17 @@
+# Python
 .venv/
+venv/
 __pycache__/
 *.py[cod]
+*.egg-info/
+
+# Django
 *.sqlite3
 db.sqlite3
+/media/
+/staticfiles/
 .env
+
+# IDE / OS
 .idea/
 .DS_Store
