@@ -11,6 +11,6 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('id','name','brand','category',
                     'calories','proteins','fats','carbs')
     list_filter = ('category',)
-    search_fields = ('name','brand','category','barcode')
+    search_fields = ('name','brand','category__name','barcode')
     autocomplete_fields = ('category',)
     ordering = ('-created_at',)
