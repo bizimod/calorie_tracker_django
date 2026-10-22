@@ -26,7 +26,7 @@ class ProductAPITest(APITestCase):
         self.profile.height = 180
         self.profile.birth_date = date(2000, 1, 1)
         self.profile.gender = 'male'
-        self.profile.activity_level = 'moderate'
+        self.profile.activity = 'moderate'
         self.profile.goal = 'maintain'
         self.profile.save()
 
@@ -67,7 +67,13 @@ class ProductAPITest(APITestCase):
         self.assertEqual(result['fats'], 7.5)
         self.assertEqual(result['carbs'], 30.0)
 
-class OpenFoodFactsIntegrationTest(TestCase):
+class OpenFoodFactsIntegrationTest(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='off@example.com', username='off', password='pass12345'
+        )
+        self.client.force_authenticate(user=self.user)
 
     @responses.activate
     def test_get_by_barcode_imports_product(self):

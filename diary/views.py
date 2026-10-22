@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import serializers, viewsets, request
+from rest_framework import serializers, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -35,7 +35,6 @@ class SummaryQuerySerializer(serializers.Serializer):
 # Управление приемами пищи. CRUD приемов пищи.
 class MealViewSet(viewsets.ModelViewSet):
     serializer_class = MealSerializer
-    queryset = Meal.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class = MealFilter
 
@@ -50,7 +49,6 @@ class MealViewSet(viewsets.ModelViewSet):
 # Управление конкретными строчками еды. Добавлять в готовый прием пищи, изменять вес.
 class MealItemViewSet(viewsets.ModelViewSet):
     serializer_class = MealItemSerializer
-    queryset = MealItem.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_class = MealItemFilter
 
@@ -64,6 +62,11 @@ class MealItemViewSet(viewsets.ModelViewSet):
             raise ValidationError({'meal': 'Нельзя добавить в чужой прием пищи'})
         serializer.save()
 
+    def perform_update(self, serializer):
+        meal = serializer.validated_data.get('meal') or self.get_object().meal
+        if meal.profile.user_id != self.request.user.id:
+            raise ValidationError({'meal': 'Нельзя добавить в чужой прием пищи'})
+        serializer.save()
 
 # Аналитика дневника. Расчет калорий - выдача отчета.
 class DailySummaryViewSet(viewsets.ViewSet):
