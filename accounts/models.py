@@ -1,6 +1,16 @@
 from datetime import date
+from django.conf import settings
 
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+class User(AbstractUser):
+    email = models.EmailField(unique=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return self.username or self.email
 
 
 class Profile(models.Model):
@@ -20,7 +30,8 @@ class Profile(models.Model):
         MAINTAIN = 'maintain', 'Поддержание'
         GAIN = 'gain', 'Набор веса'
 
-    name = models.CharField(max_length=100)
+    user=models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='profile')
+    name = models.CharField(max_length=100,blank=True,default='')
     weight = models.PositiveIntegerField(default=0, null=True, blank=True)
     height = models.PositiveIntegerField(default=0, null=True, blank=True)
     birth_date = models.DateField(null=True)
@@ -46,7 +57,7 @@ class Profile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Profile : {self.name}"
+        return f"Profile : {self.name or self.user.email}"
 
     @property
     def age(self):

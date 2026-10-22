@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.test import TestCase
 import responses
 from rest_framework.test import APITestCase
@@ -6,10 +8,27 @@ from products.models import Category, Product
 from products.services.product_service import ProductService
 from django.urls import reverse
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 
 class ProductAPITest(APITestCase):
     def setUp(self):
         self.category = Category.objects.create(name='test')
+        self.user = User.objects.create_user(
+            email='test@test.com', username='test', password='pass123'
+        )
+        self.client.force_authenticate(user=self.user)
+
+        # профиль создался автоматически сигналом
+        self.profile = self.user.profile
+        self.profile.weight = 80
+        self.profile.height = 180
+        self.profile.birth_date = date(2000, 1, 1)
+        self.profile.gender = 'male'
+        self.profile.activity_level = 'moderate'
+        self.profile.goal = 'maintain'
+        self.profile.save()
 
     def test_create_product(self):
         url = reverse('product-list')

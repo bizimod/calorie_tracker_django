@@ -8,14 +8,26 @@ from accounts.models import Profile
 from products.models import Product
 from .models import Meal, MealItem
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class DiaryTest(APITestCase):
     def setUp(self):
-        self.profile = Profile.objects.create(
-            name='Тест', weight=80, height=180,
-            birth_date=date(2000, 1, 1), gender='male',
-            activity='moderate', goal='maintain'
+        self.user = User.objects.create_user(
+            email='test@test.com', username='test', password='pass123'
         )
+        self.client.force_authenticate(user=self.user)
+
+        # профиль создался автоматически сигналом
+        self.profile = self.user.profile
+        self.profile.weight = 80
+        self.profile.height = 180
+        self.profile.birth_date = date(2000, 1, 1)
+        self.profile.gender = 'male'
+        self.profile.activity_level = 'moderate'
+        self.profile.goal = 'maintain'
+        self.profile.save()
+
         self.product = Product.objects.create(
             name='Гречка', calories=343, proteins=12.6,
             fats=3.3, carbs=62.1,

@@ -23,7 +23,7 @@ class MealSerializer(serializers.ModelSerializer):
             'id', 'profile', 'date', 'meal_type', 'meal_type_display',
             'items', 'totals', 'created_at',
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'profile','created_at']
 
     def get_totals(self, obj):
         return obj.totals()
