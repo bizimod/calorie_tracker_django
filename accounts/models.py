@@ -3,6 +3,7 @@ from django.conf import settings
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -64,7 +65,7 @@ class Profile(models.Model):
     def age(self):
         if not self.birth_date:
             return None
-        today = date.today()
+        today = timezone.localdate()
         return (today.year - self.birth_date.year) - (
                 (today.month, today.day) < (self.birth_date.month, self.birth_date.day))
 

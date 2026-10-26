@@ -118,5 +118,5 @@ class ProductService:
             )
             return product
         except IntegrityError as e:
-            logger.warning(f"Failed to save product {data.get('name')}: {e}")
+            logger.warning(f"Failed to save product {data.get("name")}: {e}")
             return None

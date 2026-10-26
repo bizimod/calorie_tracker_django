@@ -6,7 +6,7 @@ from .models import Profile, User
 class ProfileSerializer(serializers.ModelSerializer):
     age = serializers.IntegerField(read_only=True)
     daily_targets = serializers.SerializerMethodField()
-    email = serializers.CharField(read_only=True, source='user.email')
+    email = serializers.EmailField(read_only=True, source='user.email')
 
     class Meta:
         model = Profile
