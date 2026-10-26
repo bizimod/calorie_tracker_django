@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
@@ -30,8 +31,8 @@ class Profile(models.Model):
         MAINTAIN = 'maintain', 'Поддержание'
         GAIN = 'gain', 'Набор веса'
 
-    user=models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='profile')
-    name = models.CharField(max_length=100,blank=True,default='')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    name = models.CharField(max_length=100, blank=True, default='')
     weight = models.PositiveIntegerField(default=0, null=True, blank=True)
     height = models.PositiveIntegerField(default=0, null=True, blank=True)
     birth_date = models.DateField(null=True)
@@ -86,7 +87,7 @@ class Profile(models.Model):
             self.ActivityLevel.ACTIVE: 1.725,
             self.ActivityLevel.VERY_ACTIVE: 2,
         }
-        factor = factors.get(self.activity,1.2)
+        factor = factors.get(self.activity, 1.2)
         return bmr * factor
 
     # расчет КБЖУ в граммах
@@ -100,12 +101,12 @@ class Profile(models.Model):
             self.Goal.GAIN: 1.2,
         }
 
-        adjustment = adjustments.get(self.goal,1)
+        adjustment = adjustments.get(self.goal, 1)
         calories = tdee * adjustment
 
         proteins = self.weight * 2.0
         fats = self.weight * 0.9
-        carbs = (calories - proteins * 4 - fats * 9) / 4
+        carbs = max(0.0, (calories - proteins * 4 - fats * 9) / 4)
 
         return {
             'calories': round(calories),

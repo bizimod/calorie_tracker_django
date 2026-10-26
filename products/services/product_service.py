@@ -1,7 +1,7 @@
 import logging
 import time
 
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.core.cache import cache
 
 from products.models import Product, Category
@@ -79,7 +79,7 @@ class ProductService:
                 break
             except OpenFoodFactsError as e:
                 if "503" in str(e) and attempt < 2:
-                    wait = 2 ** attempt  # 1, 2, 4 секунды
+                    wait = 2 ** attempt
                     logger.warning(f"OFF 503, retry in {wait}s...")
                     time.sleep(wait)
                 else:
@@ -109,14 +109,14 @@ class ProductService:
         try:
             product = Product.objects.create(
                 name=data['name'],
-                brand=data.get('brand', ()),
-                barcode = data.get('barcode', ()),
+                brand=data.get('brand') or '',
+                barcode = data.get('barcode') or '',
                 calories = data['calories'],
                 proteins = data['proteins'],
                 fats = data['fats'],
                 carbs = data['carbs'],
             )
             return product
-        except Exception as e:
-            logger.warning(f'Failed to save product {data.get('name')}: {e}')
+        except IntegrityError as e:
+            logger.warning(f"Failed to save product {data.get('name')}: {e}")
             return None

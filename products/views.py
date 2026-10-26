@@ -5,11 +5,17 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer, ProductShortSerializer
 from .services.product_service import ProductService
+from django.db.models import Count
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        return
+
+    Category.objects.annotate(product_count=Count('product'))
 
 
 class ProductViewSet(viewsets.ModelViewSet):

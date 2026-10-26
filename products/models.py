@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 
 
 class Category(models.Model):
@@ -14,7 +15,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200, db_index=True)
-    brand = models.CharField(max_length=100, blank=True, null=True)
+    brand = models.CharField(max_length=100, blank=True, default='')
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -22,10 +23,10 @@ class Product(models.Model):
         related_name='products'
     )
 
-    calories = models.FloatField(help_text='ккал на 100 гр.')
-    proteins = models.FloatField(help_text='белки на 100 гр.')
-    fats = models.FloatField(help_text='жиры на 100 гр.')
-    carbs = models.FloatField(help_text='углеводы на 100 гр.')
+    calories = models.FloatField(validators=[MinValueValidator(0)],help_text='ккал на 100 гр.')
+    proteins = models.FloatField(validators=[MinValueValidator(0)],help_text='белки на 100 гр.')
+    fats = models.FloatField(validators=[MinValueValidator(0)],help_text='жиры на 100 гр.')
+    carbs = models.FloatField(validators=[MinValueValidator(0)],help_text='углеводы на 100 гр.')
 
     barcode = models.CharField(max_length=100, blank=True, null=True, db_index=True)
 

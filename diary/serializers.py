@@ -31,5 +31,20 @@ class MealSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'profile', 'created_at']
 
     def get_totals(self, obj):
-        return obj.totals()
+        items = list(obj.items.all())
+        return {
+            k: round(sum(getattr(i, k) for i in items), 1)
+            for k in ('calories', 'proteins', 'fats', 'carbs')
+        }
 
+    # Обработчик добавления повторного приема пищи который уже был добавлен
+    def validate(self, attrs):
+        profile = self.instance.profile if self.instance else self.context['request'].user.profile
+        date = attrs.get('date', getattr(self.instance, 'date', None))
+        meal_type = attrs.get('meal_type', getattr(self.instance, 'meal_type', None))
+        qs = Meal.objects.filter(profile=profile, date=date, meal_type=meal_type)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError({'meal_type': 'Прием пищи этого типа на эту дату уже существует'})
+        return attrs

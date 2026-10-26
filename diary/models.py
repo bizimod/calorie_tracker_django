@@ -6,10 +6,10 @@ from products.models import Product
 
 class Meal(models.Model):
     class MealType(models.TextChoices):
-        BREAKFAST = 'breakfast','завтрак'
-        LUNCH = 'lunch','обед'
-        DINNER = 'dinner','ужин'
-        SNACK = 'snack','перекус'
+        BREAKFAST = 'breakfast', 'завтрак'
+        LUNCH = 'lunch', 'обед'
+        DINNER = 'dinner', 'ужин'
+        SNACK = 'snack', 'перекус'
 
     profile = models.ForeignKey(
         Profile,
@@ -21,11 +21,11 @@ class Meal(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['date','meal_type']
+        ordering = ['date', 'meal_type']
         # один завтрак у человека в день
         constraints = [
             models.UniqueConstraint(
-                fields=['profile','date','meal_type'],
+                fields=['profile', 'date', 'meal_type'],
                 name='unique_meal_per_profile_per_day'
             ),
         ]
@@ -34,14 +34,14 @@ class Meal(models.Model):
         return f'{self.get_meal_type_display()} - {self.date} {self.profile}'
 
     # сумма КБЖУ по всем позициям приема пищи
-    def totals(self):
-        total = self.items.aggregate(
-            calories=models.Sum('calories'),
-            proteins=models.Sum('proteins'),
-            fats=models.Sum('fats'),
-            carbs=models.Sum('carbs'),
-        )
-        return {k: round(v or 0,1) for k, v in total.items()}
+    def totals(self, obj):
+        total = list(obj.items.all())
+
+        return {
+            k: round(sum(getattr(i, k) for i in total), 1)
+            for k in ('calories', 'proteins', 'fats', 'carbs')
+        }
+
 
 class MealItem(models.Model):
     meal = models.ForeignKey(
@@ -59,10 +59,10 @@ class MealItem(models.Model):
         help_text='вес порции в граммах'
     )
     # чтоб при изменении КБЖУ в таблице уже внесенные значения не поплыли
-    calories = models.FloatField(editable=False,default=0)
-    proteins = models.FloatField(editable=False,default=0)
-    fats = models.FloatField(editable=False,default=0)
-    carbs = models.FloatField(editable=False,default=0)
+    calories = models.FloatField(editable=False, default=0)
+    proteins = models.FloatField(editable=False, default=0)
+    fats = models.FloatField(editable=False, default=0)
+    carbs = models.FloatField(editable=False, default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -79,4 +79,9 @@ class MealItem(models.Model):
             self.proteins = macros['proteins']
             self.fats = macros['fats']
             self.carbs = macros['carbs']
-        super().save(*args, **kwargs)
+
+            if kwargs.get('update_fields'):
+                kwargs['update_fields'] = set(kwargs['update_fields']) | {
+                    'calories', 'proteins', 'fats', 'carbs'
+                }
+            super().save(*args, **kwargs)
