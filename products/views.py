@@ -13,9 +13,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
     def get_queryset(self):
-        return
-
-    Category.objects.annotate(product_count=Count('product'))
+        return Category.objects.annotate(product_count=Count('product'))
 
 
 class ProductViewSet(viewsets.ModelViewSet):
