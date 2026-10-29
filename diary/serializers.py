@@ -31,11 +31,7 @@ class MealSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'profile', 'created_at']
 
     def get_totals(self, obj):
-        items = list(obj.items.all())
-        return {
-            k: round(sum(getattr(i, k) for i in items), 1)
-            for k in ('calories', 'proteins', 'fats', 'carbs')
-        }
+        return obj.totals()
 
     # Обработчик добавления повторного приема пищи который уже был добавлен
     def validate(self, attrs):

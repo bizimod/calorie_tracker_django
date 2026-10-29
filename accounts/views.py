@@ -5,6 +5,10 @@ from rest_framework.decorators import action
 from .models import Profile
 from .serializers import ProfileSerializer, RegisterSerializer
 
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
 
 class ProfileViewSet(viewsets.GenericViewSet):
     serializer_class = ProfileSerializer
@@ -30,3 +34,13 @@ class ProfileViewSet(viewsets.GenericViewSet):
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        try:
+            RefreshToken(request.data['refresh']).blacklist()
+        except Exception:
+            return Response({'detail': 'Неверный токен'}, status=400)
+        return Response(status=205)

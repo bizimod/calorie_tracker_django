@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.db.models.query_utils import Q
 
 
 class Category(models.Model):
@@ -39,6 +40,11 @@ class Product(models.Model):
             models.UniqueConstraint(
                 fields=['name', 'brand'],
                 name='unique_product_name_brand',
+            ),
+            models.UniqueConstraint(
+                fields=['barcode'],
+                condition=Q(barcode__isnull=False) & Q(barcode=''),
+                name='unique_product_barcode_not_empty',
             ),
         ]
 

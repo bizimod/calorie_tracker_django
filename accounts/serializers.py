@@ -25,7 +25,14 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'password']
+        fields = ['id', 'email', 'password']
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        email = validated_data['email']
+        base = email.split('@')[0][:140]
+        username = base
+        i=1
+        while User.objects.filter(username=username).exists():
+            i+=1
+            username = f'{base}{i}'
+        return User.objects.create_user(username=username,**validated_data)

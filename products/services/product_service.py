@@ -69,26 +69,17 @@ class ProductService:
         if len(local) >= limit:
             return local
 
-        # ВАЖНО: Пауза для соблюдения лимита Open Food Facts
-        time.sleep(1.5)
-
         # 2:
-        for attempt in range(3):
-            try:
-                raw_list = self.client.search(query, page_size=limit * 2)
-                break
-            except OpenFoodFactsError as e:
-                if "503" in str(e) and attempt < 2:
-                    wait = 2 ** attempt
-                    logger.warning(f"OFF 503, retry in {wait}s...")
-                    time.sleep(wait)
-                else:
-                    logger.error(f"OFF search failed: {e}")
-                    return local  # Возвращаем только локальные
+        lock_key = f'off:search:{query.lower()}'
+        if not cache.add(lock_key, 1, timeout=2):  # не чаще 1 раза в 2 сек на запрос
+            return local
+
+        if not cache.add('off:search:rate', 1, timeout=6):  # ~10 запросов/мин суммарно
+            return local
 
 
         imported = []
-        for raw in raw_list:
+        for raw in local:
             normalized = normalize_off_product(raw)
             if not normalized:
                 continue
@@ -118,5 +109,5 @@ class ProductService:
             )
             return product
         except IntegrityError as e:
-            logger.warning(f"Failed to save product {data.get("name")}: {e}")
+            logger.warning(f"Failed to save product {data.get('name')}: {e}")
             return None

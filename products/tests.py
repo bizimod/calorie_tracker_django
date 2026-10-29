@@ -16,7 +16,7 @@ class ProductAPITest(APITestCase):
     def setUp(self):
         self.category = Category.objects.create(name='test')
         self.user = User.objects.create_user(
-            email='test@test.com', username='test', password='pass123'
+            email='test@test.com', username='test', password='pass123',is_staff=True
         )
         self.client.force_authenticate(user=self.user)
 
@@ -53,8 +53,8 @@ class ProductAPITest(APITestCase):
             fats=55, carbs=50
         )
         response = self.client.get(url)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['name'], 'Рис')
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['name'], 'Рис')
 
     def test_macros_for_weight(self):
         p = Product.objects.create(
@@ -138,7 +138,7 @@ class OpenFoodFactsIntegrationTest(APITestCase):
         url = reverse('product-by-barcode', kwargs={'code': barcode})
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, 201)  # импортирован
+        self.assertEqual(response.status_code, 200) #импортировано, замена 201 на 200 в views
         self.assertEqual(response.data['name'], 'Тест')
 
     @responses.activate

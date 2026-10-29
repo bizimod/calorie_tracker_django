@@ -34,11 +34,10 @@ class Meal(models.Model):
         return f'{self.get_meal_type_display()} - {self.date} {self.profile}'
 
     # сумма КБЖУ по всем позициям приема пищи
-    def totals(self, obj):
-        total = list(obj.items.all())
-
+    def totals(self):
+        items = list(self.items.all())
         return {
-            k: round(sum(getattr(i, k) for i in total), 1)
+            k: round(sum(getattr(i, k) for i in items), 1)
             for k in ('calories', 'proteins', 'fats', 'carbs')
         }
 
@@ -84,4 +83,4 @@ class MealItem(models.Model):
                 kwargs['update_fields'] = set(kwargs['update_fields']) | {
                     'calories', 'proteins', 'fats', 'carbs'
                 }
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
