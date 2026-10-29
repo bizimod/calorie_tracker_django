@@ -43,7 +43,7 @@ class Product(models.Model):
             ),
             models.UniqueConstraint(
                 fields=['barcode'],
-                condition=Q(barcode__isnull=False) & Q(barcode=''),
+                condition=Q(barcode__isnull=False) & ~Q(barcode=''),
                 name='unique_product_barcode_not_empty',
             ),
         ]

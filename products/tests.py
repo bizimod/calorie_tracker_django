@@ -154,6 +154,20 @@ class OpenFoodFactsIntegrationTest(APITestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    @responses.activate
+    def test_import_search_returns_off_results(self):
+        responses.add(
+            responses.GET, 'https://world.openfoodfacts.org/cgi/search.pl',
+            json={'products': [{'product_name': 'Из OFF', 'code': '999',
+                                'nutriments': {'energy-kcal_100g': 50}}]},
+        )
+        Product.objects.create(name='Гречка', brand='', barcode='1',
+                               calories=1, proteins=1, fats=1, carbs=1)
+        response = self.client.get(reverse('product-import-search'), {'q': 'Гречка'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Product.objects.filter(name='Из OFF').exists())
+        self.assertEqual(response.data[0]['name'], 'Гречка')
+
 
 class NormalizerTest(TestCase):
     def test_normalize_full_data(self):

@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import viewsets, generics, permissions
 from rest_framework.decorators import action
+from rest_framework_simplejwt.exceptions import TokenError
 
 from .models import Profile
 from .serializers import ProfileSerializer, RegisterSerializer
@@ -38,9 +39,13 @@ class RegisterView(generics.CreateAPIView):
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
+        refresh = request.data.get('refresh')
+        if not refresh:
+            return Response({'detail': 'Поле refresh обязательно'}, status=400)
         try:
-            RefreshToken(request.data['refresh']).blacklist()
-        except Exception:
-            return Response({'detail': 'Неверный токен'}, status=400)
-        return Response(status=205)
+            RefreshToken(refresh).blacklist()
+        except TokenError:
+            return Response({'detail': 'Неверный или истёкший токен'}, status=400)
+        return Response(status=204)

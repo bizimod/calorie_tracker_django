@@ -1,10 +1,9 @@
 import logging
-import time
 
 from django.db import transaction, IntegrityError
 from django.core.cache import cache
 
-from products.models import Product, Category
+from products.models import Product
 from .openfoodfacts import OpenFoodFactsClient, OpenFoodFactsError
 from .normalizer import normalize_off_product
 
@@ -39,7 +38,7 @@ class ProductService:
             return None, False
 
         if not raw:
-            cache.set(cache_key, 'not_found', 60*60*24)
+            cache.set(cache_key, 'not_found', 60 * 60 * 24)
             return None, False
 
         normalized = normalize_off_product(raw)
@@ -77,9 +76,14 @@ class ProductService:
         if not cache.add('off:search:rate', 1, timeout=6):  # ~10 запросов/мин суммарно
             return local
 
+        try:
+            raw_list = self.client.search(query, page_size=limit * 2)
+        except OpenFoodFactsError as e:
+            logger.warning(f'OFF search failed: {e}')
+            return local
 
         imported = []
-        for raw in local:
+        for raw in raw_list:
             normalized = normalize_off_product(raw)
             if not normalized:
                 continue
@@ -101,11 +105,11 @@ class ProductService:
             product = Product.objects.create(
                 name=data['name'],
                 brand=data.get('brand') or '',
-                barcode = data.get('barcode') or '',
-                calories = data['calories'],
-                proteins = data['proteins'],
-                fats = data['fats'],
-                carbs = data['carbs'],
+                barcode=data.get('barcode') or '',
+                calories=data['calories'],
+                proteins=data['proteins'],
+                fats=data['fats'],
+                carbs=data['carbs'],
             )
             return product
         except IntegrityError as e:
