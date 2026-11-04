@@ -1,0 +1,18 @@
+{% extends 'web/base.html' %}
+{% block content %}
+<h2>Профиль</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Сохранить</button>
+</form>
+
+{% if targets %}
+  <article>
+    <h3>Твои цели</h3>
+    <p>{{ targets.calories }} ккал · Б {{ targets.proteins }} · Ж {{ targets.fats }} · У {{ targets.carbs }}</p>
+  </article>
+{% else %}
+  <article class="muted">Заполни вес, рост, дату рождения и пол — тогда посчитаем КБЖУ.</article>
+{% endif %}
+{% endblock %}

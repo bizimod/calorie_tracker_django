@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'accounts',
     'products',
     'diary',
+    'django_htmx',
+    'web'
 ]
 
 MIDDLEWARE = [
@@ -66,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -130,6 +133,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'web:today'
+LOGOUT_REDIRECT_URL = 'login'
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
@@ -143,7 +151,7 @@ MAILERS = {
 OPEN_FOOD_FACTS = {
     'BASE_URL': 'https://world.openfoodfacts.org',
     'USER_AGENT': 'CalorieTracker/1.0 (bizi.mod@gamil.com)',
-    'TIMEOUT': 5,
+    'TIMEOUT': 10,
 }
 
 CACHES = {

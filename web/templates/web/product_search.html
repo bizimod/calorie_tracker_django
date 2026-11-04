@@ -1,0 +1,10 @@
+{% extends 'web/base.html' %}
+{% block content %}
+<h2>Поиск продукта</h2>
+<input type="search" name="q" placeholder="Начни вводить название…" autofocus
+       hx-get="{% url 'web:product-search' %}"
+       hx-trigger="keyup changed delay:400ms"
+       hx-target="#results">
+<div id="results"></div>
+{% if not meal %}<p class="muted">Чтобы добавить продукт, открой приём пищи на странице дня.</p>{% endif %}
+{% endblock %}

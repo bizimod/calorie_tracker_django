@@ -1,0 +1,14 @@
+{% extends 'web/base.html' %}
+{% block content %}
+<h2>{{ date|date:"d E Y" }}</h2>
+
+<nav class="date-nav">
+  <a href="{% url 'web:day' prev|date:'Y-m-d' %}">← вчера</a>
+  <a href="{% url 'web:today' %}">сегодня</a>
+  <a href="{% url 'web:day' next|date:'Y-m-d' %}">завтра →</a>
+</nav>
+
+<div id="day-meals">
+  {% include 'web/partials/_day_meals.html' %}
+</div>
+{% endblock %}

@@ -51,9 +51,14 @@ class OpenFoodFactsClient:
             'fields': 'code,product_name,brands,nutriments'
         }
         try:
-            r = self.session.get(url, params=params, timeout=self.timeout)
+            r = self.session.get(url, params=params, timeout=self.timeout * 2)
             r.raise_for_status()
         except requests.exceptions.RequestException as e:
             logger.warning(f'OFF request failed for {query} : {e}')
             raise OpenFoodFactsError(str(e))
-        return r.json().get('products', [])
+        try:
+            data = r.json()
+        except ValueError:
+            logger.warning(f'OFF returned non-JSON for search {query!r}')
+            raise OpenFoodFactsError('non-JSON response')
+        return data.get('products', [])

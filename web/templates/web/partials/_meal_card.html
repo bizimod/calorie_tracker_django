@@ -1,0 +1,42 @@
+<article id="meal-{{ card.value }}" class="meal-card">
+  <header>
+    <strong>{{ card.label }}</strong>
+    <span>{{ card.totals.calories }} ккал</span>
+  </header>
+
+  {% if card.meal %}
+    <table>
+      <tbody>
+      {% for item in card.meal.items.all %}
+        <tr>
+          <td>{{ item.product.name }}</td>
+          <td>{{ item.weight_grams }} г</td>
+          <td>{{ item.calories }} ккал</td>
+          <td>
+            <form hx-post="{% url 'web:delete-item' item.id %}"
+                  hx-target="#meal-{{ card.value }}" hx-swap="outerHTML">
+              {% csrf_token %}
+              <button type="submit" class="outline secondary" aria-label="Удалить">×</button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="muted">Пока пусто</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <input type="search" name="q" placeholder="Добавить продукт…"
+           hx-get="{% url 'web:product-search' %}"
+           hx-vals='{"meal": "{{ card.meal.id }}"}'
+           hx-trigger="keyup changed delay:400ms"
+           hx-target="#search-{{ card.value }}">
+    <div id="search-{{ card.value }}"></div>
+  {% else %}
+    <form hx-post="{% url 'web:create-meal' card.date_iso card.value %}"
+          hx-target="#day-meals" hx-swap="innerHTML">
+      {% csrf_token %}
+      <button type="submit" class="outline">Создать «{{ card.label }}»</button>
+    </form>
+  {% endif %}
+</article>

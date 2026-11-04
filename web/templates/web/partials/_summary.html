@@ -1,0 +1,18 @@
+<section class="summary">
+  <article>
+    <h3>{{ consumed.calories }} <small>ккал</small></h3>
+    <p class="muted">съедено</p>
+  </article>
+  <article>
+    <h3>{{ targets.calories|default:"—" }}</h3>
+    <p class="muted">цель</p>
+  </article>
+  <article>
+    <h3>{{ remaining.calories|default:"—" }}</h3>
+    <p class="muted">осталось</p>
+  </article>
+</section>
+
+<p class="muted">
+  Б {{ consumed.proteins }} · Ж {{ consumed.fats }} · У {{ consumed.carbs }}
+</p>
