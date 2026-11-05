@@ -1,10 +1,71 @@
-.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center; }
-.summary h3 { margin-bottom: .25rem; }
+.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.summary article {
+  margin: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.summary h3 { margin: 0 0 .25rem; font-variant-numeric: tabular-nums; }
+.summary p { margin: 0; }
+
 .meal-card { margin-bottom: 1rem; }
-.meal-card header { display: flex; justify-content: space-between; align-items: baseline; }
-.meal-card table { margin-bottom: .5rem; }
-.meal-card td { padding: .25rem .5rem; }
-.search-row { display: flex; gap: .5rem; align-items: center; padding: .25rem 0; }
+.meal-card header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: .75rem; flex-wrap: wrap;
+}
+
+.meal-table { width: 100%; table-layout: fixed; border-collapse: collapse; margin: .5rem 0 0; }
+.meal-table th,
+.meal-table td { padding: .4rem .5rem; text-align: center; vertical-align: middle; }
+.meal-table th:first-child,
+.meal-table td:first-child { text-align: left; }
+.meal-table thead th {
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .04em;
+  font-weight: 600; opacity: .6;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+}
+.meal-table tbody tr + tr td { border-top: 1px solid var(--pico-muted-border-color); }
+
+.meal-table col.col-name   { width: auto; }
+.meal-table col.col-weight { width: 150px; }
+.meal-table col.col-kcal   { width: 100px; }
+.meal-table col.col-b,
+.meal-table col.col-f,
+.meal-table col.col-u      { width: 70px; }
+.meal-table col.col-action { width: 52px; }
+
+
+.cell-name { min-width: 0; }
+.clamp { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.clamp.is-open { white-space: normal; overflow: visible; }
+.brand-line { margin-top: .1rem; }
+
+.meal-table td:nth-child(2) { width: 92px; padding: .25rem .3rem; text-align: center; }
+.meal-table form { margin: 0; }
+.meal-table td > form { display: flex; align-items: center; justify-content: center; }
+.meal-table .weight-input {
+  display: block;
+  width: 64px;
+  height: 2.25rem;
+  margin: 0 auto;
+  padding: 0 .25rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.meal-table .btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+
+  line-height: 1;
+}
+
+
 .search-row form { display: flex; gap: .25rem; margin-left: auto; }
 .date-nav { display: flex; gap: 1rem; margin-bottom: 1rem; }
 .muted { opacity: .7; }

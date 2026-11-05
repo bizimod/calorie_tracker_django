@@ -1,10 +1,31 @@
 {% extends 'web/base.html' %}
 {% block content %}
 <h2>Поиск продукта</h2>
-<input type="search" name="q" placeholder="Начни вводить название…" autofocus
+
+<input type="search" name="q" placeholder="Начни вводить название…" autofocus autocomplete="off"
        hx-get="{% url 'web:product-search' %}"
        hx-trigger="keyup changed delay:400ms"
        hx-target="#results">
-<div id="results"></div>
-{% if not meal %}<p class="muted">Чтобы добавить продукт, открой приём пищи на странице дня.</p>{% endif %}
+
+<table class="meal-table">
+  <colgroup>
+    <col class="col-name">
+    <col class="col-weight">
+    <col class="col-kcal">
+    <col class="col-b">
+    <col class="col-f">
+    <col class="col-u">
+    <col class="col-action">
+  </colgroup>
+  <thead>
+    <tr><th>Продукт</th><th>Вес</th><th>Ккал</th><th>Б</th><th>Ж</th><th>У</th><th></th></tr>
+  </thead>
+  <tbody id="results">
+    {% include 'web/partials/_products_results.html' %}
+  </tbody>
+</table>
+
+{% if not meal %}
+  <p class="muted">Чтобы добавить продукт, открой приём пищи на странице дня.</p>
+{% endif %}
 {% endblock %}

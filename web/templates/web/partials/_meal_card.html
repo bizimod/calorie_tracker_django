@@ -1,37 +1,68 @@
 <article id="meal-{{ card.value }}" class="meal-card">
   <header>
     <strong>{{ card.label }}</strong>
-    <span>{{ card.totals.calories }} ккал</span>
+    <span>
+      {{ card.totals.calories|floatformat:"-1" }} ккал ·
+      Б {{ card.totals.proteins|floatformat:"-1" }} ·
+      Ж {{ card.totals.fats|floatformat:"-1" }} ·
+      У {{ card.totals.carbs|floatformat:"-1" }}
+    </span>
   </header>
 
   {% if card.meal %}
-    <table>
-      <tbody>
-      {% for item in card.meal.items.all %}
-        <tr>
-          <td>{{ item.product.name }}</td>
-          <td>{{ item.weight_grams }} г</td>
-          <td>{{ item.calories }} ккал</td>
-          <td>
-            <form hx-post="{% url 'web:delete-item' item.id %}"
-                  hx-target="#meal-{{ card.value }}" hx-swap="outerHTML">
-              {% csrf_token %}
-              <button type="submit" class="outline secondary" aria-label="Удалить">×</button>
-            </form>
-          </td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="4" class="muted">Пока пусто</td></tr>
-      {% endfor %}
-      </tbody>
-    </table>
-
-    <input type="search" name="q" placeholder="Добавить продукт…"
+    <input type="search" name="q" placeholder="Добавить продукт…" autocomplete="off"
            hx-get="{% url 'web:product-search' %}"
            hx-vals='{"meal": "{{ card.meal.id }}"}'
            hx-trigger="keyup changed delay:400ms"
-           hx-target="#search-{{ card.value }}">
-    <div id="search-{{ card.value }}"></div>
+           hx-target="#search-{{ card.value }}"
+           hx-swap="innerHTML">
+
+    <table class="meal-table">
+      <colgroup>
+        <col class="col-name">
+        <col class="col-weight">
+        <col class="col-kcal">
+        <col class="col-b">
+        <col class="col-f">
+        <col class="col-u">
+        <col class="col-action">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Продукт</th>
+          <th>Вес</th>
+          <th>Ккал</th>
+          <th>Б</th>
+          <th>Ж</th>
+          <th>У</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in card.meal.items.all %}
+          <tr>
+            <td class="cell-name">
+              <span class="clamp" title="{{ item.product.name }}">{{ item.product.name }}</span>
+            </td>
+            <td>{{ item.weight_grams|floatformat:"-1" }} г</td>
+            <td>{{ item.calories|floatformat:"-1" }}</td>
+            <td>{{ item.proteins|floatformat:"-1" }}</td>
+            <td>{{ item.fats|floatformat:"-1" }}</td>
+            <td>{{ item.carbs|floatformat:"-1" }}</td>
+            <td>
+              <form hx-post="{% url 'web:delete-item' item.id %}"
+                    hx-target="#meal-{{ card.value }}" hx-swap="outerHTML">
+                {% csrf_token %}
+                <button type="submit" class="outline secondary btn-icon" aria-label="Удалить">×</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="muted">Пока пусто</td></tr>
+        {% endfor %}
+      </tbody>
+      <tbody id="search-{{ card.value }}"></tbody>
+    </table>
   {% else %}
     <form hx-post="{% url 'web:create-meal' card.date_iso card.value %}"
           hx-target="#day-meals" hx-swap="innerHTML">

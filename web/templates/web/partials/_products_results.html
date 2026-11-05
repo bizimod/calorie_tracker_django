@@ -1,20 +1,35 @@
 {% for p in results %}
-  <div class="search-row">
-    <span>{{ p.name }}{% if p.brand %} · {{ p.brand }}{% endif %}</span>
-    <small class="muted">{{ p.calories }} ккал/100г</small>
-    {% if meal %}
-      <form hx-post="{% url 'web:add-product' meal.id p.id %}"
-            hx-target="#meal-{{ meal.meal_type }}" hx-swap="outerHTML">
-        {% csrf_token %}
-        <input type="number" name="weight_grams" value="100" min="1" step="1">
-        <button type="submit">+</button>
-      </form>
-    {% endif %}
-  </div>
+  <tr class="search-result">
+    <td class="cell-name">
+      <span class="clamp" title="{{ p.name }}">{{ p.name }}</span>
+      {% if p.brand %}
+        <small class="muted brand-line clamp" title="{{ p.brand }}">{{ p.brand }}</small>
+      {% endif %}
+    </td>
+    <td>
+      <input class="weight-input" type="number" name="weight_grams"
+             id="weight-{{ p.id }}" value="100" min="1" step="1">
+    </td>
+    <td>{{ p.calories|floatformat:"-1" }}</td>
+    <td>{{ p.proteins|floatformat:"-1" }}</td>
+    <td>{{ p.fats|floatformat:"-1" }}</td>
+    <td>{{ p.carbs|floatformat:"-1" }}</td>
+    <td>
+      {% if meal %}
+        <form id="add-{{ p.id }}"
+              hx-post="{% url 'web:add-product' meal.id p.id %}"
+              hx-include="#weight-{{ p.id }}"
+              hx-target="#meal-{{ meal.meal_type }}" hx-swap="outerHTML">
+          {% csrf_token %}
+          <button type="submit" class="btn-icon" aria-label="Добавить">+</button>
+        </form>
+      {% endif %}
+    </td>
+  </tr>
 {% empty %}
   {% if query %}
-    <small class="muted">
+    <tr><td colspan="7" class="muted">
       Ничего не найдено{% if query|length < 2 %} — введите минимум 2 символа{% endif %}
-    </small>
+    </td></tr>
   {% endif %}
 {% endfor %}
