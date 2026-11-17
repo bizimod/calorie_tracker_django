@@ -3,11 +3,11 @@
     <td class="cell-name">
       <span class="clamp" title="{{ p.name }}">{{ p.name }}</span>
       {% if p.brand %}
-        <small class="muted brand-line clamp" title="{{ p.brand }}">{{ p.brand }}</small>
+        <span class="brand-name clamp" title="{{ p.brand }}">{{ p.brand }}</span>
       {% endif %}
     </td>
     <td>
-      <input class="weight-input" type="number" name="weight_grams"
+      <input class="weight" type="number" name="weight_grams"
              id="weight-{{ p.id }}" value="100" min="1" step="1">
     </td>
     <td>{{ p.calories|floatformat:"-1" }}</td>
@@ -16,20 +16,21 @@
     <td>{{ p.carbs|floatformat:"-1" }}</td>
     <td>
       {% if meal %}
-        <form id="add-{{ p.id }}"
-              hx-post="{% url 'web:add-product' meal.id p.id %}"
+        <form hx-post="{% url 'web:add-product' meal.id p.id %}"
               hx-include="#weight-{{ p.id }}"
-              hx-target="#meal-{{ meal.meal_type }}" hx-swap="outerHTML">
+              hx-target="#day-meals" hx-swap="innerHTML">
           {% csrf_token %}
-          <button type="submit" class="btn-icon" aria-label="Добавить">+</button>
+          <button type="submit" class="icon-btn add" aria-label="Добавить">+</button>
         </form>
       {% endif %}
     </td>
   </tr>
 {% empty %}
   {% if query %}
-    <tr><td colspan="7" class="muted">
-      Ничего не найдено{% if query|length < 2 %} — введите минимум 2 символа{% endif %}
-    </td></tr>
+    <tr class="empty-row">
+      <td colspan="7">
+        Ничего не найдено{% if query|length < 2 %} — введите минимум 2 символа{% endif %}
+      </td>
+    </tr>
   {% endif %}
 {% endfor %}

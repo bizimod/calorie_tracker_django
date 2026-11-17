@@ -1,7 +1,7 @@
-<article id="meal-{{ card.value }}" class="meal-card">
+<article id="meal-{{ card.value }}" class="meal">
   <header>
-    <strong>{{ card.label }}</strong>
-    <span>
+    <h2>{{ card.label|capfirst }}</h2>
+    <span class="kcal">
       {{ card.totals.calories|floatformat:"-1" }} ккал ·
       Б {{ card.totals.proteins|floatformat:"-1" }} ·
       Ж {{ card.totals.fats|floatformat:"-1" }} ·
@@ -10,13 +10,6 @@
   </header>
 
   {% if card.meal %}
-    <input type="search" name="q" placeholder="Добавить продукт…" autocomplete="off"
-           hx-get="{% url 'web:product-search' %}"
-           hx-vals='{"meal": "{{ card.meal.id }}"}'
-           hx-trigger="keyup changed delay:400ms"
-           hx-target="#search-{{ card.value }}"
-           hx-swap="innerHTML">
-
     <table class="meal-table">
       <colgroup>
         <col class="col-name">
@@ -43,6 +36,9 @@
           <tr>
             <td class="cell-name">
               <span class="clamp" title="{{ item.product.name }}">{{ item.product.name }}</span>
+              {% if item.product.brand %}
+                <span class="brand-name clamp" title="{{ item.product.brand }}">{{ item.product.brand }}</span>
+              {% endif %}
             </td>
             <td>{{ item.weight_grams|floatformat:"-1" }} г</td>
             <td>{{ item.calories|floatformat:"-1" }}</td>
@@ -51,23 +47,32 @@
             <td>{{ item.carbs|floatformat:"-1" }}</td>
             <td>
               <form hx-post="{% url 'web:delete-item' item.id %}"
-                    hx-target="#meal-{{ card.value }}" hx-swap="outerHTML">
+                    hx-target="#day-meals" hx-swap="innerHTML">
                 {% csrf_token %}
-                <button type="submit" class="outline secondary btn-icon" aria-label="Удалить">×</button>
+                <button type="submit" class="icon-btn danger" aria-label="Удалить">×</button>
               </form>
             </td>
           </tr>
         {% empty %}
-          <tr><td colspan="7" class="muted">Пока пусто</td></tr>
+          <tr class="empty-row"><td colspan="7">Пока пусто</td></tr>
         {% endfor %}
       </tbody>
       <tbody id="search-{{ card.value }}"></tbody>
     </table>
+
+    <div class="searchbox">
+      <input type="search" name="q" placeholder="Добавить продукт…" autocomplete="off"
+             hx-get="{% url 'web:product-search' %}"
+             hx-vals='{"meal": "{{ card.meal.id }}"}'
+             hx-trigger="keyup changed delay:400ms"
+             hx-target="#search-{{ card.value }}"
+             hx-swap="innerHTML">
+    </div>
   {% else %}
     <form hx-post="{% url 'web:create-meal' card.date_iso card.value %}"
           hx-target="#day-meals" hx-swap="innerHTML">
       {% csrf_token %}
-      <button type="submit" class="outline">Создать «{{ card.label }}»</button>
+      <button type="submit" class="create">Создать «{{ card.label|capfirst }}»</button>
     </form>
   {% endif %}
 </article>

@@ -1,10 +1,12 @@
 {% extends 'web/base.html' %}
 {% block content %}
-<h2>Вход</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Войти</button>
-</form>
-<p><a href="{% url 'web:register' %}">Нет аккаунта? Зарегистрироваться</a></p>
+<div class="auth">
+  <h1>Вход</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="primary" type="submit">Войти</button>
+  </form>
+  <p class="muted">Нет аккаунта? <a href="{% url 'web:register' %}">Зарегистрироваться</a></p>
+</div>
 {% endblock %}

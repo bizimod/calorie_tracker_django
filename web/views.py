@@ -17,14 +17,10 @@ MEAL_TYPES = Meal.MealType.choices
 NUTRIENTS = ('calories', 'proteins', 'fats', 'carbs')
 
 
-def _card_for(meal):
-    return {
-        'meal': meal,
-        'value': meal.meal_type,
-        'label': meal.get_meal_type_display(),
-        'totals': meal.totals(),
-        'date_iso': meal.date.isoformat(),
-    }
+def _percent(value, target):
+    if not target:
+        return 0
+    return max(0, min(100, round(value / target * 100)))
 
 
 def _day_context(profile, target):
@@ -55,6 +51,7 @@ def _day_context(profile, target):
         'consumed': {k: round(v, 1) for k, v in consumed.items()},
         'targets': targets,
         'remaining': remaining,
+        'percent': {k: _percent(consumed[k], targets.get(k)) for k in NUTRIENTS},
         'date': target,
         'prev': target - timedelta(days=1),
         'next': target + timedelta(days=1),
@@ -97,7 +94,7 @@ def product_search(request):
         meal = get_object_or_404(Meal, pk=request.GET.get('meal'), profile__user=request.user)
     results = ProductService().search_and_import(query) if len(query) >= 2 else []
     template = ('web/partials/_products_results.html'
-                if request.htmx else 'web/partials/products_search.html')
+                if request.htmx else 'web/product_search.html')
     return render(request, template, {'results': results, 'query': query, 'meal': meal})
 
 
@@ -113,7 +110,8 @@ def add_product_to_meal(request, meal_id, pk):
     MealItem.objects.create(meal=meal, product=product, weight_grams=weight)
 
     if request.htmx:
-        return render(request, 'web/partials/_meal_card.html', {'card': _card_for(meal)})
+        return render(request, 'web/partials/_day_meals.html',
+                      _day_context(request.user.profile, meal.date))
     return redirect('web:day', date=meal.date.isoformat())
 
 
@@ -125,7 +123,8 @@ def delete_item(request, pk):
     item.delete()
 
     if request.htmx:
-        return render(request, 'web/partials/_meal_card.html', {'card': _card_for(meal)})
+        return render(request, 'web/partials/_day_meals.html',
+                      _day_context(request.user.profile, meal.date))
     return redirect('web:day', date=meal.date.isoformat())
 
 
@@ -139,10 +138,11 @@ def profile_view(request):
     return render(request, 'web/profile.html',
                   {'form': form, 'targets': profile.calculate_daily_targets(), })
 
+
 def register_view(request):
     form = RegisterForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         user = form.save()
         login(request, user)
         return redirect('web:today')
-    return render(request,'registration/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})

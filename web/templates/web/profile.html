@@ -1,18 +1,30 @@
 {% extends 'web/base.html' %}
 {% block content %}
-<h2>Профиль</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Сохранить</button>
-</form>
+<h1 class="page-title">Профиль</h1>
 
-{% if targets %}
-  <article>
-    <h3>Твои цели</h3>
-    <p>{{ targets.calories }} ккал · Б {{ targets.proteins }} · Ж {{ targets.fats }} · У {{ targets.carbs }}</p>
+<div class="profile-grid">
+  <article class="card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="primary" type="submit">Сохранить</button>
+    </form>
   </article>
-{% else %}
-  <article class="muted">Заполни вес, рост, дату рождения и пол — тогда посчитаем КБЖУ.</article>
-{% endif %}
+
+  <article class="card">
+    <span class="label">Твои цели</span>
+    {% if targets %}
+      <ul class="targets">
+        <li><span>Калории</span><strong>{{ targets.calories }} ккал</strong></li>
+        <li><span>Белки</span><strong>{{ targets.proteins }} г</strong></li>
+        <li><span>Жиры</span><strong>{{ targets.fats }} г</strong></li>
+        <li><span>Углеводы</span><strong>{{ targets.carbs }} г</strong></li>
+      </ul>
+    {% else %}
+      <p class="muted" style="margin-top:12px;font-size:13.5px">
+        Заполни вес, рост, дату рождения и пол — тогда посчитаем КБЖУ.
+      </p>
+    {% endif %}
+  </article>
+</div>
 {% endblock %}

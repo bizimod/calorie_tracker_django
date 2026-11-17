@@ -42,3 +42,12 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ['name', 'gender', 'weight', 'height', 'birth_date', 'activity', 'goal']
         widgets = {'birth_date': forms.DateInput(attrs={'type': 'date'})}
+        labels = {
+            'name': 'Имя',
+            'gender': 'Пол',
+            'weight': 'Вес, кг',
+            'height': 'Рост, см',
+            'birth_date': 'Дата рождения',
+            'activity': 'Активность',
+            'goal': 'Цель',
+        }

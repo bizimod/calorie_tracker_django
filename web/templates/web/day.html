@@ -1,12 +1,14 @@
 {% extends 'web/base.html' %}
 {% block content %}
-<h2>{{ date|date:"d E Y" }}</h2>
-
-<nav class="date-nav">
-  <a href="{% url 'web:day' prev|date:'Y-m-d' %}">← вчера</a>
-  <a href="{% url 'web:today' %}">сегодня</a>
-  <a href="{% url 'web:day' next|date:'Y-m-d' %}">завтра →</a>
-</nav>
+<section class="daybar">
+  <a class="nav-btn" href="{% url 'web:day' prev|date:'Y-m-d' %}" aria-label="Предыдущий день">←</a>
+  <div class="date">
+    <strong>{{ date|date:"j E" }}</strong>
+    <small>{{ date|date:"Y" }}</small>
+  </div>
+  <a class="nav-btn" href="{% url 'web:day' next|date:'Y-m-d' %}" aria-label="Следующий день">→</a>
+  <a class="today" href="{% url 'web:today' %}">сегодня</a>
+</section>
 
 <div id="day-meals">
   {% include 'web/partials/_day_meals.html' %}

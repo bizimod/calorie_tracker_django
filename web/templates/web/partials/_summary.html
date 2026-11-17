@@ -1,18 +1,77 @@
-<section class="summary">
-  <article>
-    <h3>{{ consumed.calories }} <small>ккал</small></h3>
-    <p class="muted">съедено</p>
-  </article>
-  <article>
-    <h3>{{ targets.calories|default:"—" }}</h3>
-    <p class="muted">цель</p>
-  </article>
-  <article>
-    <h3>{{ remaining.calories|default:"—" }}</h3>
-    <p class="muted">осталось</p>
-  </article>
-</section>
+{% if targets.calories %}
+  <section class="summary">
+    <article class="cal">
+      <div class="row">
+        <span class="label">Калории</span>
+        {% if remaining.calories < 0 %}
+          <span class="hint over">перебор {{ remaining.calories|cut:"-"|floatformat:"-1" }} ккал</span>
+        {% else %}
+          <span class="hint">осталось {{ remaining.calories|floatformat:"-1" }} ккал</span>
+        {% endif %}
+      </div>
+      <div class="cal-value">
+        <strong>{{ consumed.calories|floatformat:"-1" }}</strong>
+        <span>/ {{ targets.calories }} ккал</span>
+      </div>
+      <div class="bar"><i style="width: {{ percent.calories|default:0 }}%"></i></div>
+    </article>
 
-<p class="muted">
-  Б {{ consumed.proteins }} · Ж {{ consumed.fats }} · У {{ consumed.carbs }}
-</p>
+    <article class="macros">
+      <div class="macro">
+        <span class="label">Белки</span>
+        <div class="macro-value">
+          <strong>{{ consumed.proteins|floatformat:"-1" }}</strong>
+          <span>/ {{ targets.proteins }} г</span>
+        </div>
+        <div class="bar"><i style="width: {{ percent.proteins|default:0 }}%"></i></div>
+      </div>
+      <div class="macro">
+        <span class="label">Жиры</span>
+        <div class="macro-value">
+          <strong>{{ consumed.fats|floatformat:"-1" }}</strong>
+          <span>/ {{ targets.fats }} г</span>
+        </div>
+        <div class="bar"><i style="width: {{ percent.fats|default:0 }}%"></i></div>
+      </div>
+      <div class="macro">
+        <span class="label">Углеводы</span>
+        <div class="macro-value">
+          <strong>{{ consumed.carbs|floatformat:"-1" }}</strong>
+          <span>/ {{ targets.carbs }} г</span>
+        </div>
+        <div class="bar"><i style="width: {{ percent.carbs|default:0 }}%"></i></div>
+      </div>
+    </article>
+  </section>
+{% else %}
+  <section class="summary">
+    <article class="cal">
+      <div class="row">
+        <span class="label">Калории</span>
+        <a class="hint" href="{% url 'web:profile' %}">заполнить профиль</a>
+      </div>
+      <div class="cal-value">
+        <strong>{{ consumed.calories|floatformat:"-1" }}</strong>
+        <span>ккал съедено</span>
+      </div>
+      <p class="muted note">
+        Укажи вес, рост, дату рождения и пол — и здесь появятся цели по КБЖУ.
+      </p>
+    </article>
+
+    <article class="macros">
+      <div class="macro">
+        <span class="label">Белки</span>
+        <div class="macro-value"><strong>{{ consumed.proteins|floatformat:"-1" }}</strong><span>г</span></div>
+      </div>
+      <div class="macro">
+        <span class="label">Жиры</span>
+        <div class="macro-value"><strong>{{ consumed.fats|floatformat:"-1" }}</strong><span>г</span></div>
+      </div>
+      <div class="macro">
+        <span class="label">Углеводы</span>
+        <div class="macro-value"><strong>{{ consumed.carbs|floatformat:"-1" }}</strong><span>г</span></div>
+      </div>
+    </article>
+  </section>
+{% endif %}

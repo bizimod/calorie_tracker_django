@@ -1,40 +1,49 @@
+{% load static %}
 <!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Дневник калорий{% endblock %}</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
-<script>
-  document.addEventListener('click', function (event) {
-    var node = event.target.closest('.clamp');
-    if (node) node.classList.toggle('is-open');
-  });
-</script>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-  <nav class="container">
-    <ul><li><a href="{% url 'web:today' %}"><strong>Калории</strong></a></li></ul>
-    <ul>
+  <header class="topbar">
+    <a class="brand" href="{% url 'web:today' %}">
+      <span class="logo">◐</span>
+      <span>
+        <strong>Калории</strong>
+        <small>дневник питания</small>
+      </span>
+    </a>
+    <nav class="user">
       {% if user.is_authenticated %}
-        <li><a href="{% url 'web:profile' %}">Профиль</a></li>
-        <li>
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="outline">Выйти</button>
-          </form>
-        </li>
+        <a href="{% url 'web:profile' %}">Профиль</a>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button class="ghost" type="submit">Выйти</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}">Войти</a>
       {% endif %}
-    </ul>
-  </nav>
+    </nav>
+  </header>
 
-  <main class="container">
+  <main class="page">
     {% if messages %}
-      {% for message in messages %}<article>{{ message }}</article>{% endfor %}
+      {% for message in messages %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
     {% endif %}
     {% block content %}{% endblock %}
   </main>
+
+  <script>
+    document.addEventListener('click', function (event) {
+      var node = event.target.closest('.clamp');
+      if (node) node.classList.toggle('is-open');
+    });
+  </script>
 </body>
 </html>

@@ -1,31 +1,42 @@
 {% extends 'web/base.html' %}
 {% block content %}
-<h2>Поиск продукта</h2>
+<section class="daybar">
+  <div class="date">
+    <strong>Поиск продукта</strong>
+    <small>нажми на приём пищи, чтобы добавить</small>
+  </div>
+</section>
 
-<input type="search" name="q" placeholder="Начни вводить название…" autofocus autocomplete="off"
-       hx-get="{% url 'web:product-search' %}"
-       hx-trigger="keyup changed delay:400ms"
-       hx-target="#results">
+<div class="searchbox" style="margin-bottom:16px">
+  <input type="search" name="q" placeholder="Начни вводить название…" autofocus autocomplete="off"
+         hx-get="{% url 'web:product-search' %}"
+         hx-trigger="keyup changed delay:400ms"
+         hx-target="#results">
+</div>
 
-<table class="meal-table">
-  <colgroup>
-    <col class="col-name">
-    <col class="col-weight">
-    <col class="col-kcal">
-    <col class="col-b">
-    <col class="col-f">
-    <col class="col-u">
-    <col class="col-action">
-  </colgroup>
-  <thead>
-    <tr><th>Продукт</th><th>Вес</th><th>Ккал</th><th>Б</th><th>Ж</th><th>У</th><th></th></tr>
-  </thead>
-  <tbody id="results">
-    {% include 'web/partials/_products_results.html' %}
-  </tbody>
-</table>
+<article class="meal">
+  <table class="meal-table">
+    <colgroup>
+      <col class="col-name">
+      <col class="col-weight">
+      <col class="col-kcal">
+      <col class="col-b">
+      <col class="col-f">
+      <col class="col-u">
+      <col class="col-action">
+    </colgroup>
+    <thead>
+      <tr><th>Продукт</th><th>Вес</th><th>Ккал</th><th>Б</th><th>Ж</th><th>У</th><th></th></tr>
+    </thead>
+    <tbody id="results">
+      {% include 'web/partials/_products_results.html' %}
+    </tbody>
+  </table>
+</article>
 
 {% if not meal %}
-  <p class="muted">Чтобы добавить продукт, открой приём пищи на странице дня.</p>
+  <p class="muted" style="margin-top:14px">
+    Чтобы добавить продукт, открой приём пищи на странице дня.
+  </p>
 {% endif %}
 {% endblock %}
